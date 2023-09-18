@@ -42,23 +42,31 @@ def list_records():
         return
 
     table = PrettyTable(['Name', 'Type', 'Data'])
-    
+    sorted_records = []
+
     for record in records:
         # Extract data between quotes
         quoted_data = record.split('"')[1] if '"' in record else None
         if not quoted_data:
             print(f"Skipped malformed record: {record}")
             continue
-        
+
         record_parts = quoted_data.split()
-        if len(record_parts) != 3: # We expect 'name record_type data' format
+        if len(record_parts) != 3:  # We expect 'name record_type data' format
             print(f"Skipped malformed record: {record}")
             continue
-        
+
         name, record_type, data = record_parts
+        sorted_records.append((name, record_type, data))
+
+    # Sort by record type
+    sorted_records.sort(key=lambda x: x[1])
+
+    for name, record_type, data in sorted_records:
         table.add_row([name, record_type, data])
-        
+
     print(table)
+
 
 
 def add_record(name, record_type, data):
