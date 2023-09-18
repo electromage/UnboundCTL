@@ -42,10 +42,24 @@ def list_records():
         return
 
     table = PrettyTable(['Name', 'Type', 'Data'])
+    
     for record in records:
-        _, name, record_type, data, _ = record.split(' ')
+        # Extract data between quotes
+        quoted_data = record.split('"')[1] if '"' in record else None
+        if not quoted_data:
+            print(f"Skipped malformed record: {record}")
+            continue
+        
+        record_parts = quoted_data.split()
+        if len(record_parts) != 3: # We expect 'name record_type data' format
+            print(f"Skipped malformed record: {record}")
+            continue
+        
+        name, record_type, data = record_parts
         table.add_row([name, record_type, data])
+        
     print(table)
+
 
 def add_record(name, record_type, data):
     if record_type not in VALID_RECORD_TYPES:
