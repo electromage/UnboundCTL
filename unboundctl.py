@@ -2,8 +2,9 @@
 
 import argparse
 import os
+from prettytable import PrettyTable
 
-CONFIG_FILE = "/path/to/config.conf"
+CONFIG_FILE = os.getenv("UNBOUND_CONFIG")
 
 def read_records():
     with open(CONFIG_FILE, 'r') as f:
@@ -13,6 +14,14 @@ def write_records(records):
     with open(CONFIG_FILE, 'w') as f:
         for record in records:
             f.write(record + '\n')
+
+def list_records():
+    records = read_records()
+    table = PrettyTable(['Name', 'Type', 'Data'])
+    for record in records:
+        _, name, record_type, data, _ = record.split(' ')
+        table.add_row([name, record_type, data])
+    print(table)
 
 def add_record(name, record_type, data):
     records = read_records()
@@ -59,6 +68,7 @@ if __name__ == '__main__':
     parser.add_argument('--name', type=str, required=True, help='Name for the record.')
     parser.add_argument('--type', type=str, help='Type of the record (e.g. A, MX). Required for adding.')
     parser.add_argument('--data', type=str, help='Data for the record. Required for adding.')
+    parser.add_argument('-l', '--list', action='store_true', help='List all records.')
 
     args = parser.parse_args()
 
@@ -71,5 +81,9 @@ if __name__ == '__main__':
             print("Error: --type and --data are required for adding a record.")
             exit(1)
         add_record(args.name, args.type.upper(), args.data)
+
+    if args.list:
+        list_records()  
+
     elif args.delete:
         delete_records(args.name)
