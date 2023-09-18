@@ -45,8 +45,7 @@ def list_records():
     sorted_records = []
 
     for record in records:
-        # Extract data between quotes
-        quoted_data = record.split('"')[1] if '"' in record else None
+        quoted_data = record.split('"')[1] if '"' in record else None # Extract data between quotes
         if not quoted_data:
             print(f"Skipped malformed record: {record}")
             continue
@@ -59,15 +58,12 @@ def list_records():
         name, record_type, data = record_parts
         sorted_records.append((name, record_type, data))
 
-    # Sort by record type
-    sorted_records.sort(key=lambda x: x[1])
+    sorted_records.sort(key=lambda x: x[1]) # Sort by record type
 
     for name, record_type, data in sorted_records:
         table.add_row([name, record_type, data])
 
     print(table)
-
-
 
 def add_record(name, record_type, data):
     if record_type not in VALID_RECORD_TYPES:
